@@ -1,0 +1,3384 @@
+<!-- /index.html -->
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>KokoLog</title>
+
+  <!-- =========================================================
+       Tailwind CSS
+       ========================================================= -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ink: '#172033',
+            calm: '#eef6ff',
+            mint: '#ecfdf5',
+            violetSoft: '#f5f3ff',
+            roseSoft: '#fff1f2'
+          },
+          boxShadow: {
+            soft: '0 12px 40px rgba(15, 23, 42, .08)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- =========================================================
+       HTMX
+       ========================================================= -->
+  <script
+    src="https://unpkg.com/htmx.org@2.0.4">
+  </script>
+
+  <!-- =========================================================
+       Alpine.js
+       ========================================================= -->
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
+  </script>
+
+  <!-- =========================================================
+       hyperscript
+       ========================================================= -->
+  <script
+    src="https://unpkg.com/hyperscript.org@0.9.14">
+  </script>
+
+  <!-- =========================================================
+       EaseMotion CSS
+       ========================================================= -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/easemotion@1.0.0/dist/easemotion.min.css">
+
+  <!-- =========================================================
+       PyScript
+       ========================================================= -->
+  <link
+    rel="stylesheet"
+    href="https://pyscript.net/releases/2024.1.1/core.css">
+
+  <script
+    type="module"
+    src="https://pyscript.net/releases/2024.1.1/core.js">
+  </script>
+
+  <!-- =========================================================
+       sql.js
+       ========================================================= -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.js">
+  </script>
+
+  <!-- =========================================================
+       php.js
+       ========================================================= -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/php.js/0.1.2/php.min.js">
+  </script>
+
+  <!-- =========================================================
+       Application CSS
+       ========================================================= -->
+  <style>
+
+    :root {
+      color-scheme: light;
+    }
+
+    html.dark {
+      color-scheme: dark;
+    }
+
+    body {
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans JP",
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 0% 0%,
+          rgba(59,130,246,.12),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 100% 0%,
+          rgba(139,92,246,.12),
+          transparent 30%
+        ),
+        #f8fafc;
+    }
+
+    .dark body {
+      background:
+        radial-gradient(
+          circle at 0% 0%,
+          rgba(37,99,235,.15),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 100% 0%,
+          rgba(124,58,237,.15),
+          transparent 30%
+        ),
+        #020617;
+    }
+
+    /* =========================================================
+       EaseMotion fallback animations
+       ========================================================= */
+
+    .motion-fade-up {
+      animation:
+        fadeUp .55s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .motion-fade {
+      animation:
+        fadeIn .45s ease both;
+    }
+
+    .motion-scale {
+      animation:
+        scaleIn .35s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* =========================================================
+       Glass
+       ========================================================= */
+
+    .glass {
+      background:
+        rgba(255,255,255,.78);
+
+      backdrop-filter:
+        blur(18px);
+
+      -webkit-backdrop-filter:
+        blur(18px);
+
+      border:
+        1px solid rgba(255,255,255,.7);
+    }
+
+    .dark .glass {
+      background:
+        rgba(15,23,42,.78);
+
+      border-color:
+        rgba(148,163,184,.16);
+    }
+
+    /* =========================================================
+       Progress
+       ========================================================= */
+
+    .progress-track {
+      width: 100%;
+      height: 9px;
+      overflow: hidden;
+      border-radius: 9999px;
+      background: #e2e8f0;
+    }
+
+    .dark .progress-track {
+      background: #1e293b;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 9999px;
+      transition:
+        width .45s cubic-bezier(.22,1,.36,1);
+    }
+
+    /* =========================================================
+       Range
+       ========================================================= */
+
+    input[type="range"] {
+      accent-color: #4f46e5;
+    }
+
+    /* =========================================================
+       Alpine
+       ========================================================= */
+
+    [x-cloak] {
+      display: none !important;
+    }
+
+    /* =========================================================
+       Scrollbar
+       ========================================================= */
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+  </style>
+</head>
+
+<body
+  x-data="lifeWorkApp()"
+  x-init="init()"
+  class="min-h-screen text-slate-800 dark:text-slate-100">
+
+  <!-- =========================================================
+       Application
+       ========================================================= -->
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- =======================================================
+         Header
+         ======================================================= -->
+
+    <header
+      class="motion-fade-up mb-6">
+
+      <div
+        class="flex flex-col lg:flex-row
+               lg:items-center lg:justify-between
+               gap-4">
+
+        <div>
+
+          <div
+            class="flex items-center gap-3">
+
+            <div
+              class="w-12 h-12 rounded-2xl
+                     bg-gradient-to-br
+                     from-blue-600 to-violet-600
+                     flex items-center justify-center
+                     text-white text-2xl
+                     shadow-lg">
+
+              🧭
+
+            </div>
+
+            <div>
+
+              <h1
+                class="text-2xl sm:text-3xl
+                       font-bold tracking-tight">
+
+                KokoLog
+
+              </h1>
+
+              <p
+                class="text-sm text-slate-500
+                       dark:text-slate-400 mt-1">
+
+                タスク・仕事・心身の状態・言いたいことを
+                ひとつに整理
+
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div
+          class="flex flex-wrap gap-2">
+
+          <button
+            type="button"
+            @click="toggleDark()"
+            class="px-4 py-2 rounded-xl
+                   border border-slate-200
+                   dark:border-slate-700
+                   bg-white dark:bg-slate-800
+                   hover:bg-slate-50
+                   dark:hover:bg-slate-700
+                   transition">
+
+            <span x-show="!darkMode">
+              🌙 ダーク
+            </span>
+
+            <span x-show="darkMode" x-cloak>
+              ☀️ ライト
+            </span>
+
+          </button>
+
+          <button
+            type="button"
+            @click="saveEverything()"
+            class="px-4 py-2 rounded-xl
+                   bg-slate-900
+                   dark:bg-blue-600
+                   text-white
+                   hover:opacity-90
+                   transition">
+
+            💾 保存
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- =======================================================
+         Dashboard Summary
+         ======================================================= -->
+
+    <section
+      class="grid grid-cols-2 lg:grid-cols-4
+             gap-4 mb-6">
+
+      <!-- Tasks -->
+
+      <div
+        class="glass rounded-3xl p-5
+               shadow-soft motion-fade-up">
+
+        <p
+          class="text-xs text-slate-500
+                 dark:text-slate-400">
+
+          タスク
+
+        </p>
+
+        <div
+          class="flex items-end
+                 justify-between mt-2">
+
+          <p
+            class="text-3xl font-bold"
+            x-text="tasks.length">
+
+          </p>
+
+          <span
+            class="text-xs text-emerald-600
+                   dark:text-emerald-400"
+            x-text="completedTasks + ' 完了'">
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- Progress -->
+
+      <div
+        class="glass rounded-3xl p-5
+               shadow-soft motion-fade-up"
+        style="animation-delay:.08s">
+
+        <p
+          class="text-xs text-slate-500
+                 dark:text-slate-400">
+
+          業務進捗
+
+        </p>
+
+        <p
+          class="text-3xl font-bold mt-2"
+          x-text="overallProgress + '%'">
+
+        </p>
+
+        <div class="progress-track mt-3">
+
+          <div
+            class="progress-bar bg-blue-500"
+            :style="'width:' + overallProgress + '%'">
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Mood -->
+
+      <div
+        class="glass rounded-3xl p-5
+               shadow-soft motion-fade-up"
+        style="animation-delay:.16s">
+
+        <p
+          class="text-xs text-slate-500
+                 dark:text-slate-400">
+
+          今日の精神状態
+
+        </p>
+
+        <div
+          class="flex items-center
+                 gap-3 mt-2">
+
+          <span
+            class="text-3xl"
+            x-text="moodEmoji">
+
+          </span>
+
+          <span
+            class="font-semibold"
+            x-text="moodLabel">
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- Health -->
+
+      <div
+        class="glass rounded-3xl p-5
+               shadow-soft motion-fade-up"
+        style="animation-delay:.24s">
+
+        <p
+          class="text-xs text-slate-500
+                 dark:text-slate-400">
+
+          コンディション
+
+        </p>
+
+        <p
+          class="text-xl font-bold mt-3"
+          x-text="healthStatus">
+
+        </p>
+
+        <p
+          class="text-xs text-slate-500 mt-1"
+          x-text="healthMessage">
+
+        </p>
+
+      </div>
+
+    </section>
+
+    <!-- =======================================================
+         Main Grid
+         ======================================================= -->
+
+    <div
+      class="grid grid-cols-1 xl:grid-cols-3
+             gap-6">
+
+      <!-- =====================================================
+           Main Column
+           ===================================================== -->
+
+      <div
+        class="xl:col-span-2 space-y-6">
+
+        <!-- ===================================================
+             Task List
+             =================================================== -->
+
+        <section
+          class="glass rounded-3xl
+                 shadow-soft p-5
+                 motion-fade-up">
+
+          <div
+            class="flex flex-col sm:flex-row
+                   sm:items-center
+                   sm:justify-between
+                   gap-3 mb-5">
+
+            <div>
+
+              <h2
+                class="text-lg font-bold">
+
+                📋 タスクリスト
+
+              </h2>
+
+              <p
+                class="text-xs text-slate-500 mt-1">
+
+                優先順位と業務進捗を管理
+
+              </p>
+
+            </div>
+
+            <button
+              type="button"
+              @click="showTaskForm = !showTaskForm"
+              class="px-4 py-2 rounded-xl
+                     bg-blue-600
+                     hover:bg-blue-700
+                     text-white transition">
+
+              ＋ タスク追加
+
+            </button>
+
+          </div>
+
+          <!-- Add Task -->
+
+          <div
+            x-show="showTaskForm"
+            x-cloak
+            class="motion-scale
+                   mb-5 p-4 rounded-2xl
+                   bg-blue-50
+                   dark:bg-blue-950/30
+                   border border-blue-100
+                   dark:border-blue-900">
+
+            <div
+              class="grid grid-cols-1
+                     md:grid-cols-5 gap-3">
+
+              <input
+                x-model="newTask.title"
+                type="text"
+                placeholder="タスク名"
+                class="md:col-span-2
+                       px-4 py-3 rounded-xl
+                       bg-white dark:bg-slate-900
+                       border border-slate-200
+                       dark:border-slate-700
+                       focus:outline-none
+                       focus:ring-2
+                       focus:ring-blue-300">
+
+              <select
+                x-model="newTask.priority"
+                class="px-4 py-3 rounded-xl
+                       bg-white dark:bg-slate-900
+                       border border-slate-200
+                       dark:border-slate-700">
+
+                <option value="high">
+                  高優先
+                </option>
+
+                <option value="medium">
+                  中優先
+                </option>
+
+                <option value="low">
+                  低優先
+                </option>
+
+              </select>
+
+              <select
+                x-model="newTask.category"
+                class="px-4 py-3 rounded-xl
+                       bg-white dark:bg-slate-900
+                       border border-slate-200
+                       dark:border-slate-700">
+
+                <option value="仕事">
+                  仕事
+                </option>
+
+                <option value="生活">
+                  生活
+                </option>
+
+                <option value="健康">
+                  健康
+                </option>
+
+                <option value="その他">
+                  その他
+                </option>
+
+              </select>
+
+              <button
+                type="button"
+                @click="createTask()"
+                class="px-4 py-3 rounded-xl
+                       bg-slate-900
+                       dark:bg-blue-600
+                       text-white">
+
+                追加
+
+              </button>
+
+            </div>
+
+          </div>
+
+          <!-- Task Items -->
+
+          <div class="space-y-3">
+
+            <template
+              x-for="(task, index) in tasks"
+              :key="task.id">
+
+              <article
+                class="p-4 rounded-2xl
+                       bg-white/80
+                       dark:bg-slate-900/70
+                       border border-slate-200
+                       dark:border-slate-800
+                       hover:shadow-md
+                       transition">
+
+                <div
+                  class="flex flex-col
+                         md:flex-row
+                         md:items-center
+                         gap-4">
+
+                  <!-- Complete -->
+
+                  <button
+                    type="button"
+                    @click="toggleTask(index)"
+                    class="w-9 h-9 shrink-0
+                           rounded-full
+                           border-2
+                           flex items-center
+                           justify-center
+                           transition"
+                    :class="task.completed
+                      ? 'bg-emerald-500 border-emerald-500 text-white'
+                      : 'border-slate-300 dark:border-slate-600'">
+
+                    <span
+                      x-show="task.completed">
+
+                      ✓
+
+                    </span>
+
+                  </button>
+
+                  <!-- Main -->
+
+                  <div
+                    class="flex-1 min-w-0">
+
+                    <div
+                      class="flex flex-wrap
+                             items-center gap-2">
+
+                      <h3
+                        class="font-semibold"
+                        :class="task.completed
+                          ? 'line-through text-slate-400'
+                          : ''"
+                        x-text="task.title">
+
+                      </h3>
+
+                      <span
+                        class="px-2 py-1
+                               rounded-full
+                               text-[10px]"
+                        :class="priorityClass(task.priority)"
+                        x-text="priorityLabel(task.priority)">
+
+                      </span>
+
+                      <span
+                        class="px-2 py-1
+                               rounded-full
+                               text-[10px]
+                               bg-slate-100
+                               dark:bg-slate-800
+                               text-slate-500"
+                        x-text="task.category">
+
+                      </span>
+
+                    </div>
+
+                    <div
+                      class="flex items-center
+                             gap-3 mt-3">
+
+                      <div
+                        class="progress-track
+                               flex-1">
+
+                        <div
+                          class="progress-bar"
+                          :class="
+                            task.completed
+                            ? 'bg-emerald-500'
+                            : 'bg-blue-500'
+                          "
+                          :style="'width:' +
+                            task.progress + '%'">
+
+                        </div>
+
+                      </div>
+
+                      <span
+                        class="text-xs
+                               font-bold w-10
+                               text-right"
+                        x-text="task.progress + '%'">
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                  <!-- Controls -->
+
+                  <div
+                    class="flex gap-2">
+
+                    <button
+                      type="button"
+                      @click="changeTaskProgress(index, -10)"
+                      class="w-9 h-9 rounded-lg
+                             bg-slate-100
+                             dark:bg-slate-800">
+
+                      −
+
+                    </button>
+
+                    <button
+                      type="button"
+                      @click="changeTaskProgress(index, 10)"
+                      class="w-9 h-9 rounded-lg
+                             bg-blue-50
+                             dark:bg-blue-950
+                             text-blue-600">
+
+                      ＋
+
+                    </button>
+
+                    <button
+                      type="button"
+                      @click="deleteTask(index)"
+                      class="w-9 h-9 rounded-lg
+                             bg-rose-50
+                             dark:bg-rose-950
+                             text-rose-500">
+
+                      ×
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </article>
+
+            </template>
+
+            <div
+              x-show="tasks.length === 0"
+              class="text-center py-10
+                     text-slate-400">
+
+              タスクはありません。
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ===================================================
+             Business Progress
+             =================================================== -->
+
+        <section
+          class="glass rounded-3xl
+                 shadow-soft p-5
+                 motion-fade-up">
+
+          <div
+            class="flex items-center
+                   justify-between mb-5">
+
+            <div>
+
+              <h2
+                class="text-lg font-bold">
+
+                📈 業務進捗
+
+              </h2>
+
+              <p
+                class="text-xs text-slate-500 mt-1">
+
+                プロジェクト単位で仕事の進み具合を確認
+
+              </p>
+
+            </div>
+
+            <button
+              type="button"
+              @click="addProject()"
+              class="px-4 py-2 rounded-xl
+                     bg-violet-600
+                     hover:bg-violet-700
+                     text-white">
+
+              ＋ 業務
+
+            </button>
+
+          </div>
+
+          <div class="space-y-6">
+
+            <template
+              x-for="(project, index) in projects"
+              :key="project.id">
+
+              <div>
+
+                <div
+                  class="flex items-start
+                         justify-between gap-4 mb-2">
+
+                  <div>
+
+                    <h3
+                      class="font-semibold"
+                      x-text="project.name">
+
+                    </h3>
+
+                    <p
+                      class="text-xs
+                             text-slate-500 mt-1"
+                      x-text="project.note">
+
+                    </p>
+
+                  </div>
+
+                  <span
+                    class="font-bold text-sm"
+                    x-text="project.progress + '%'">
+
+                  </span>
+
+                </div>
+
+                <div
+                  class="progress-track">
+
+                  <div
+                    class="progress-bar"
+                    :class="project.color"
+                    :style="'width:' +
+                      project.progress + '%'">
+
+                  </div>
+
+                </div>
+
+                <div
+                  class="flex flex-wrap
+                         gap-2 mt-3">
+
+                  <button
+                    type="button"
+                    @click="changeProject(index, -10)"
+                    class="px-3 py-1.5
+                           text-xs rounded-lg
+                           bg-slate-100
+                           dark:bg-slate-800">
+
+                    −10%
+
+                  </button>
+
+                  <button
+                    type="button"
+                    @click="changeProject(index, 10)"
+                    class="px-3 py-1.5
+                           text-xs rounded-lg
+                           bg-violet-50
+                           dark:bg-violet-950
+                           text-violet-600">
+
+                    ＋10%
+
+                  </button>
+
+                  <button
+                    type="button"
+                    @click="deleteProject(index)"
+                    class="px-3 py-1.5
+                           text-xs rounded-lg
+                           bg-rose-50
+                           text-rose-500">
+
+                    削除
+
+                  </button>
+
+                </div>
+
+              </div>
+
+            </template>
+
+          </div>
+
+        </section>
+
+      </div>
+
+      <!-- =====================================================
+           Sidebar
+           ===================================================== -->
+
+      <aside class="space-y-6">
+
+        <!-- ===================================================
+             Health
+             =================================================== -->
+
+        <section
+          class="glass rounded-3xl
+                 shadow-soft p-5
+                 motion-fade-up">
+
+          <div class="mb-5">
+
+            <h2
+              class="text-lg font-bold">
+
+              🫶 心身の状態
+
+            </h2>
+
+            <p
+              class="text-xs text-slate-500 mt-1">
+
+              今日の自分の状態を記録
+
+            </p>
+
+          </div>
+
+          <!-- Mood -->
+
+          <label
+            class="text-sm font-semibold">
+
+            精神状態
+
+          </label>
+
+          <div
+            class="grid grid-cols-5
+                   gap-2 mt-3 mb-5">
+
+            <template
+              x-for="mood in moods"
+              :key="mood.value">
+
+              <button
+                type="button"
+                @click="setMood(mood.value)"
+                class="rounded-xl p-2
+                       bg-slate-50
+                       dark:bg-slate-800
+                       transition"
+                :class="
+                  currentMood === mood.value
+                  ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-950'
+                  : ''
+                ">
+
+                <div
+                  class="text-2xl"
+                  x-text="mood.emoji">
+
+                </div>
+
+                <div
+                  class="text-[9px] mt-1"
+                  x-text="mood.label">
+
+                </div>
+
+              </button>
+
+            </template>
+
+          </div>
+
+          <!-- Energy -->
+
+          <div class="mb-5">
+
+            <div
+              class="flex justify-between
+                     items-center mb-2">
+
+              <label
+                class="text-sm font-semibold">
+
+                エネルギー
+
+              </label>
+
+              <span
+                class="font-bold text-blue-600"
+                x-text="energy + '/10'">
+
+              </span>
+
+            </div>
+
+            <input
+              type="range"
+              min="1"
+              max="10"
+              x-model.number="energy"
+              @change="saveHealth()"
+              class="w-full">
+
+          </div>
+
+          <!-- Stress -->
+
+          <div class="mb-5">
+
+            <div
+              class="flex justify-between
+                     items-center mb-2">
+
+              <label
+                class="text-sm font-semibold">
+
+                ストレス
+
+              </label>
+
+              <span
+                class="font-bold text-rose-500"
+                x-text="stress + '/10'">
+
+              </span>
+
+            </div>
+
+            <input
+              type="range"
+              min="1"
+              max="10"
+              x-model.number="stress"
+              @change="saveHealth()"
+              class="w-full">
+
+          </div>
+
+          <!-- Sleep -->
+
+          <div class="mb-5">
+
+            <label
+              class="text-sm font-semibold">
+
+              睡眠時間
+
+            </label>
+
+            <div
+              class="flex items-center
+                     gap-2 mt-2">
+
+              <input
+                type="number"
+                min="0"
+                max="24"
+                step=".5"
+                x-model.number="sleep"
+                @change="saveHealth()"
+                class="w-full px-4 py-3
+                       rounded-xl
+                       bg-slate-50
+                       dark:bg-slate-800
+                       border border-slate-200
+                       dark:border-slate-700">
+
+              <span
+                class="text-sm">
+
+                時間
+
+              </span>
+
+            </div>
+
+          </div>
+
+          <!-- Health Note -->
+
+          <label
+            class="text-sm font-semibold">
+
+            ひとこと
+
+          </label>
+
+          <textarea
+            x-model="healthNote"
+            @change="saveHealth()"
+            rows="4"
+            placeholder="今日は少し疲れている、よく眠れた、集中できている…など"
+            class="w-full mt-2
+                   px-4 py-3 rounded-xl
+                   bg-slate-50
+                   dark:bg-slate-800
+                   border border-slate-200
+                   dark:border-slate-700
+                   focus:outline-none
+                   focus:ring-2
+                   focus:ring-blue-300">
+
+          </textarea>
+
+          <div
+            class="mt-4 p-3 rounded-xl
+                   bg-slate-50
+                   dark:bg-slate-800">
+
+            <p
+              class="text-xs
+                     text-slate-500">
+
+              状態：
+
+            </p>
+
+            <p
+              class="font-semibold mt-1"
+              x-text="healthStatus">
+
+            </p>
+
+            <p
+              class="text-xs
+                     text-slate-500 mt-1"
+              x-text="healthMessage">
+
+            </p>
+
+          </div>
+
+        </section>
+
+        <!-- ===================================================
+             Thought Simplifier
+             =================================================== -->
+
+        <section
+          class="glass rounded-3xl
+                 shadow-soft p-5
+                 motion-fade-up">
+
+          <div class="mb-5">
+
+            <h2
+              class="text-lg font-bold">
+
+              💬 言いたいことを簡略化
+
+            </h2>
+
+            <p
+              class="text-xs text-slate-500 mt-1">
+
+              頭の中にあることを、そのまま書いてください。
+
+            </p>
+
+          </div>
+
+          <textarea
+            x-model="rawThought"
+            rows="7"
+            placeholder="例：
+最近ちょっと仕事が多くて疲れている。
+A案件は今週中に終わらせたい。
+B案件は急ぎなのか分からない。
+今日は少し休みたい。"
+            class="w-full px-4 py-3
+                   rounded-xl
+                   bg-slate-50
+                   dark:bg-slate-800
+                   border border-slate-200
+                   dark:border-slate-700
+                   focus:outline-none
+                   focus:ring-2
+                   focus:ring-violet-300">
+
+          </textarea>
+
+          <button
+            type="button"
+            @click="simplifyThought()"
+            class="w-full mt-3 py-3
+                   rounded-xl
+                   bg-gradient-to-r
+                   from-violet-600
+                   to-blue-600
+                   text-white
+                   font-semibold
+                   hover:opacity-90
+                   transition">
+
+            ✨ 簡略化してまとめる
+
+          </button>
+
+          <!-- Result -->
+
+          <div
+            x-show="summary"
+            x-cloak
+            class="mt-4 p-4 rounded-2xl
+                   bg-violet-50
+                   dark:bg-violet-950/30
+                   border border-violet-100
+                   dark:border-violet-900
+                   motion-scale">
+
+            <div
+              class="flex items-center
+                     justify-between gap-3">
+
+              <span
+                class="text-xs font-bold
+                       text-violet-600
+                       dark:text-violet-300">
+
+                要点
+
+              </span>
+
+              <button
+                type="button"
+                @click="copySummary()"
+                class="text-xs px-3 py-1.5
+                       rounded-lg
+                       bg-white
+                       dark:bg-slate-800
+                       border border-slate-200
+                       dark:border-slate-700">
+
+                コピー
+
+              </button>
+
+            </div>
+
+            <p
+              class="mt-3 text-sm
+                     leading-7 whitespace-pre-line"
+              x-text="summary">
+
+            </p>
+
+          </div>
+
+          <!-- Quick format -->
+
+          <div
+            class="mt-4 grid grid-cols-3
+                   gap-2">
+
+            <button
+              type="button"
+              @click="setThoughtTemplate('相談')"
+              class="py-2 rounded-lg
+                     text-xs
+                     bg-blue-50
+                     dark:bg-blue-950
+                     text-blue-600">
+
+              相談
+
+            </button>
+
+            <button
+              type="button"
+              @click="setThoughtTemplate('報告')"
+              class="py-2 rounded-lg
+                     text-xs
+                     bg-emerald-50
+                     dark:bg-emerald-950
+                     text-emerald-600">
+
+              報告
+
+            </button>
+
+            <button
+              type="button"
+              @click="setThoughtTemplate('依頼')"
+              class="py-2 rounded-lg
+                     text-xs
+                     bg-violet-50
+                     dark:bg-violet-950
+                     text-violet-600">
+
+              依頼
+
+            </button>
+
+          </div>
+
+        </section>
+
+        <!-- ===================================================
+             Quick Actions
+             =================================================== -->
+
+        <section
+          class="glass rounded-3xl
+                 shadow-soft p-5">
+
+          <h2
+            class="text-lg font-bold mb-4">
+
+            ⚡ クイック操作
+
+          </h2>
+
+          <div
+            class="grid grid-cols-2
+                   gap-2">
+
+            <button
+              type="button"
+              @click="restMode()"
+              class="p-3 rounded-xl
+                     bg-emerald-50
+                     dark:bg-emerald-950/40
+                     text-emerald-700
+                     dark:text-emerald-300">
+
+              🌿 休憩
+
+            </button>
+
+            <button
+              type="button"
+              @click="focusMode()"
+              class="p-3 rounded-xl
+                     bg-blue-50
+                     dark:bg-blue-950/40
+                     text-blue-700
+                     dark:text-blue-300">
+
+              🎯 集中
+
+            </button>
+
+            <button
+              type="button"
+              @click="exportJSON()"
+              class="p-3 rounded-xl
+                     bg-slate-100
+                     dark:bg-slate-800
+                     text-slate-700
+                     dark:text-slate-200">
+
+              📤 JSON
+
+            </button>
+
+            <button
+              type="button"
+              @click="clearAll()"
+              class="p-3 rounded-xl
+                     bg-rose-50
+                     dark:bg-rose-950/40
+                     text-rose-600
+                     dark:text-rose-300">
+
+              🗑 リセット
+
+            </button>
+
+          </div>
+
+        </section>
+
+      </aside>
+
+    </div>
+
+    <!-- =======================================================
+         Footer
+         ======================================================= -->
+
+    <footer
+      class="py-8 text-center
+             text-xs text-slate-400">
+
+      <p>
+        KokoLog
+      </p>
+
+      <p class="mt-1">
+        LocalStorage + sql.js によるブラウザ内データ管理
+      </p>
+
+    </footer>
+
+  </div>
+
+  <!-- =========================================================
+       Save Notification
+       ========================================================= -->
+
+  <div
+    id="saveNotification"
+    class="fixed bottom-5 left-1/2
+           -translate-x-1/2
+           px-5 py-3 rounded-2xl
+           bg-slate-900
+           text-white text-sm
+           shadow-xl
+           opacity-0
+           pointer-events-none
+           transition-opacity duration-300">
+
+    ✓ 保存しました
+
+  </div>
+
+  <!-- =========================================================
+       PyScript
+       ========================================================= -->
+
+  <script type="py">
+
+from datetime import datetime
+
+def current_date():
+    return datetime.now().strftime("%Y-%m-%d")
+
+def current_datetime():
+    return datetime.now().isoformat()
+
+import js
+
+js.window.pyCurrentDate = current_date
+js.window.pyCurrentDateTime = current_datetime
+
+  </script>
+
+  <!-- =========================================================
+       Application JavaScript
+       ========================================================= -->
+
+  <script>
+
+    /*
+     * =========================================================
+     * SQLite
+     * =========================================================
+     */
+
+    let SQL = null;
+    let sqliteDB = null;
+
+    async function initializeSQLite() {
+
+      try {
+
+        SQL = await initSqlJs({
+          locateFile: file => {
+            return (
+              "https://cdnjs.cloudflare.com/ajax/libs/" +
+              "sql.js/1.12.0/" +
+              file
+            );
+          }
+        });
+
+        sqliteDB =
+          new SQL.Database();
+
+        sqliteDB.run(`
+          CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY,
+            title TEXT NOT NULL,
+            priority TEXT NOT NULL,
+            category TEXT,
+            progress INTEGER DEFAULT 0,
+            completed INTEGER DEFAULT 0,
+            created_at TEXT
+          );
+
+          CREATE TABLE IF NOT EXISTS projects (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            note TEXT,
+            progress INTEGER DEFAULT 0,
+            color TEXT,
+            created_at TEXT
+          );
+
+          CREATE TABLE IF NOT EXISTS health (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            mood INTEGER,
+            energy INTEGER,
+            stress INTEGER,
+            sleep REAL,
+            note TEXT,
+            created_at TEXT
+          );
+
+          CREATE TABLE IF NOT EXISTS thoughts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            raw TEXT,
+            summary TEXT,
+            created_at TEXT
+          );
+        `);
+
+        console.log(
+          "sql.js initialized"
+        );
+
+      } catch (error) {
+
+        console.warn(
+          "sql.js initialization failed:",
+          error
+        );
+
+      }
+
+    }
+
+
+    /*
+     * =========================================================
+     * php.js compatibility helpers
+     * =========================================================
+     */
+
+    function phpTrim(value) {
+
+      try {
+
+        if (
+          window.php &&
+          typeof window.php.trim === "function"
+        ) {
+          return window.php.trim(
+            String(value || "")
+          );
+        }
+
+      } catch (error) {}
+
+      return String(value || "").trim();
+
+    }
+
+
+    function phpNl2br(value) {
+
+      try {
+
+        if (
+          window.php &&
+          typeof window.php.nl2br === "function"
+        ) {
+          return window.php.nl2br(
+            String(value || "")
+          );
+        }
+
+      } catch (error) {}
+
+      return String(value || "")
+        .replace(/\n/g, "<br>");
+
+    }
+
+
+    /*
+     * =========================================================
+     * Default data
+     * =========================================================
+     */
+
+    const DEFAULT_TASKS = [
+
+      {
+        id: 1,
+        title: "今日の最重要タスクを確認",
+        priority: "high",
+        category: "仕事",
+        progress: 60,
+        completed: false
+      },
+
+      {
+        id: 2,
+        title: "メール・連絡事項を整理",
+        priority: "medium",
+        category: "仕事",
+        progress: 30,
+        completed: false
+      },
+
+      {
+        id: 3,
+        title: "明日の予定を確認",
+        priority: "low",
+        category: "生活",
+        progress: 100,
+        completed: true
+      }
+
+    ];
+
+
+    const DEFAULT_PROJECTS = [
+
+      {
+        id: 1,
+        name: "メイン業務",
+        note: "今週の主要業務",
+        progress: 65,
+        color: "bg-blue-500"
+      },
+
+      {
+        id: 2,
+        name: "サブ業務",
+        note: "確認・調整・連絡",
+        progress: 40,
+        color: "bg-violet-500"
+      },
+
+      {
+        id: 3,
+        name: "自己管理",
+        note: "生活・健康・休息",
+        progress: 70,
+        color: "bg-emerald-500"
+      }
+
+    ];
+
+
+    /*
+     * =========================================================
+     * Alpine application
+     * =========================================================
+     */
+
+    function lifeWorkApp() {
+
+      return {
+
+        /*
+         * -------------------------------------------------------
+         * State
+         * -------------------------------------------------------
+         */
+
+        darkMode: false,
+
+        tasks: [],
+
+        projects: [],
+
+        showTaskForm: false,
+
+        newTask: {
+          title: "",
+          priority: "medium",
+          category: "仕事"
+        },
+
+        currentMood: 3,
+
+        energy: 6,
+
+        stress: 4,
+
+        sleep: 7,
+
+        healthNote: "",
+
+        rawThought: "",
+
+        summary: "",
+
+        moods: [
+
+          {
+            value: 1,
+            emoji: "😣",
+            label: "かなりつらい"
+          },
+
+          {
+            value: 2,
+            emoji: "😟",
+            label: "少しつらい"
+          },
+
+          {
+            value: 3,
+            emoji: "😐",
+            label: "普通"
+          },
+
+          {
+            value: 4,
+            emoji: "🙂",
+            label: "良い"
+          },
+
+          {
+            value: 5,
+            emoji: "😄",
+            label: "とても良い"
+          }
+
+        ],
+
+
+        /*
+         * -------------------------------------------------------
+         * Init
+         * -------------------------------------------------------
+         */
+
+        async init() {
+
+          this.darkMode =
+            localStorage.getItem(
+              "lifeWork.darkMode"
+            ) === "true";
+
+          if (this.darkMode) {
+
+            document.documentElement
+              .classList.add("dark");
+
+          }
+
+          await initializeSQLite();
+
+          this.loadFromLocalStorage();
+
+          this.loadSQLiteIfNecessary();
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Computed
+         * -------------------------------------------------------
+         */
+
+        get completedTasks() {
+
+          return this.tasks.filter(
+            task => task.completed
+          ).length;
+
+        },
+
+
+        get overallProgress() {
+
+          if (!this.tasks.length) {
+            return 0;
+          }
+
+          const sum =
+            this.tasks.reduce(
+              (total, task) =>
+                total +
+                Number(task.progress || 0),
+              0
+            );
+
+          return Math.round(
+            sum / this.tasks.length
+          );
+
+        },
+
+
+        get selectedMood() {
+
+          return (
+            this.moods.find(
+              mood =>
+                mood.value ===
+                Number(this.currentMood)
+            )
+            ||
+            this.moods[2]
+          );
+
+        },
+
+
+        get moodEmoji() {
+
+          return this.selectedMood.emoji;
+
+        },
+
+
+        get moodLabel() {
+
+          return this.selectedMood.label;
+
+        },
+
+
+        get healthStatus() {
+
+          if (
+            Number(this.stress) >= 8 ||
+            Number(this.energy) <= 2 ||
+            Number(this.sleep) < 4
+          ) {
+            return "休息を優先";
+          }
+
+          if (
+            Number(this.stress) >= 6 ||
+            Number(this.energy) <= 4 ||
+            Number(this.sleep) < 6
+          ) {
+            return "少し注意";
+          }
+
+          return "比較的安定";
+
+        },
+
+
+        get healthMessage() {
+
+          if (
+            this.healthStatus ===
+            "休息を優先"
+          ) {
+
+            return (
+              "今日は無理に負荷を上げない"
+            );
+
+          }
+
+          if (
+            this.healthStatus ===
+            "少し注意"
+          ) {
+
+            return (
+              "作業量を少し減らす"
+            );
+
+          }
+
+          return (
+            "現在のペースを維持"
+          );
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Dark mode
+         * -------------------------------------------------------
+         */
+
+        toggleDark() {
+
+          this.darkMode =
+            !this.darkMode;
+
+          document.documentElement
+            .classList.toggle(
+              "dark",
+              this.darkMode
+            );
+
+          localStorage.setItem(
+            "lifeWork.darkMode",
+            String(this.darkMode)
+          );
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Task
+         * -------------------------------------------------------
+         */
+
+        createTask() {
+
+          const title =
+            phpTrim(
+              this.newTask.title
+            );
+
+          if (!title) {
+
+            alert(
+              "タスク名を入力してください。"
+            );
+
+            return;
+
+          }
+
+          this.tasks.push({
+
+            id:
+              Date.now(),
+
+            title,
+
+            priority:
+              this.newTask.priority,
+
+            category:
+              this.newTask.category,
+
+            progress:
+              0,
+
+            completed:
+              false
+
+          });
+
+          this.newTask = {
+
+            title: "",
+
+            priority: "medium",
+
+            category: "仕事"
+
+          };
+
+          this.showTaskForm =
+            false;
+
+          this.saveEverything();
+
+        },
+
+
+        toggleTask(index) {
+
+          const task =
+            this.tasks[index];
+
+          task.completed =
+            !task.completed;
+
+          task.progress =
+            task.completed
+              ? 100
+              : Math.min(
+                  Number(task.progress),
+                  90
+                );
+
+          this.saveEverything();
+
+        },
+
+
+        changeTaskProgress(
+          index,
+          amount
+        ) {
+
+          const task =
+            this.tasks[index];
+
+          task.progress =
+            Math.max(
+              0,
+              Math.min(
+                100,
+                Number(task.progress) +
+                amount
+              )
+            );
+
+          task.completed =
+            task.progress >= 100;
+
+          this.saveEverything();
+
+        },
+
+
+        deleteTask(index) {
+
+          if (
+            !confirm(
+              "このタスクを削除しますか？"
+            )
+          ) {
+            return;
+          }
+
+          this.tasks.splice(
+            index,
+            1
+          );
+
+          this.saveEverything();
+
+        },
+
+
+        priorityLabel(priority) {
+
+          return {
+
+            high: "高優先",
+
+            medium: "中優先",
+
+            low: "低優先"
+
+          }[priority] || "中優先";
+
+        },
+
+
+        priorityClass(priority) {
+
+          return {
+
+            high:
+              "bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-300",
+
+            medium:
+              "bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-300",
+
+            low:
+              "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-300"
+
+          }[priority] || "";
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Projects
+         * -------------------------------------------------------
+         */
+
+        addProject() {
+
+          const name =
+            prompt(
+              "業務・プロジェクト名"
+            );
+
+          if (!name) {
+            return;
+          }
+
+          const note =
+            prompt(
+              "簡単な説明",
+              "新しく追加した業務"
+            ) || "";
+
+          this.projects.push({
+
+            id:
+              Date.now(),
+
+            name:
+              phpTrim(name),
+
+            note:
+              phpTrim(note),
+
+            progress:
+              0,
+
+            color:
+              "bg-violet-500"
+
+          });
+
+          this.saveEverything();
+
+        },
+
+
+        changeProject(
+          index,
+          amount
+        ) {
+
+          const project =
+            this.projects[index];
+
+          project.progress =
+            Math.max(
+              0,
+              Math.min(
+                100,
+                Number(project.progress) +
+                amount
+              )
+            );
+
+          this.saveEverything();
+
+        },
+
+
+        deleteProject(index) {
+
+          if (
+            !confirm(
+              "この業務を削除しますか？"
+            )
+          ) {
+            return;
+          }
+
+          this.projects.splice(
+            index,
+            1
+          );
+
+          this.saveEverything();
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Health
+         * -------------------------------------------------------
+         */
+
+        setMood(value) {
+
+          this.currentMood =
+            Number(value);
+
+          this.saveHealth();
+
+        },
+
+
+        saveHealth() {
+
+          const health = {
+
+            mood:
+              Number(this.currentMood),
+
+            energy:
+              Number(this.energy),
+
+            stress:
+              Number(this.stress),
+
+            sleep:
+              Number(this.sleep),
+
+            note:
+              this.healthNote,
+
+            updatedAt:
+              new Date().toISOString()
+
+          };
+
+          localStorage.setItem(
+            "lifeWork.health",
+            JSON.stringify(health)
+          );
+
+          this.saveHealthToSQLite(
+            health
+          );
+
+          this.notifySaved();
+
+        },
+
+
+        saveHealthToSQLite(
+          health
+        ) {
+
+          if (!sqliteDB) {
+            return;
+          }
+
+          try {
+
+            sqliteDB.run(
+              `
+                INSERT INTO health
+                (
+                  mood,
+                  energy,
+                  stress,
+                  sleep,
+                  note,
+                  created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+              `,
+              [
+
+                health.mood,
+
+                health.energy,
+
+                health.stress,
+
+                health.sleep,
+
+                health.note,
+
+                health.updatedAt
+
+              ]
+            );
+
+          } catch (error) {
+
+            console.warn(
+              "SQLite health error:",
+              error
+            );
+
+          }
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Thought simplifier
+         * -------------------------------------------------------
+         */
+
+        simplifyThought() {
+
+          const text =
+            phpTrim(
+              this.rawThought
+            );
+
+          if (!text) {
+
+            this.summary =
+              "まず、頭の中にあることをそのまま書いてみましょう。";
+
+            return;
+
+          }
+
+          const sentences =
+            text
+              .split(
+                /[。！？!?\n]+/
+              )
+              .map(
+                value =>
+                  phpTrim(value)
+              )
+              .filter(Boolean);
+
+          const actionWords = [
+
+            "したい",
+            "やりたい",
+            "進めたい",
+            "終わらせたい",
+            "確認したい",
+            "相談したい",
+            "休みたい",
+            "休む",
+            "進める"
+
+          ];
+
+          const concernWords = [
+
+            "不安",
+            "心配",
+            "疲れ",
+            "しんど",
+            "難しい",
+            "分からない",
+            "わからない",
+            "迷っている",
+            "困っている"
+
+          ];
+
+          const action = [];
+
+          const concern = [];
+
+          const current = [];
+
+          sentences.forEach(
+            sentence => {
+
+              const lower =
+                sentence.toLowerCase();
+
+              if (
+                actionWords.some(
+                  word =>
+                    lower.includes(word)
+                )
+              ) {
+
+                action.push(sentence);
+
+              } else if (
+                concernWords.some(
+                  word =>
+                    lower.includes(word)
+                )
+              ) {
+
+                concern.push(sentence);
+
+              } else {
+
+                current.push(sentence);
+
+              }
+
+            }
+          );
+
+
+          const output = [];
+
+
+          if (current.length) {
+
+            output.push(
+              "【現状】 " +
+              current
+                .slice(0, 3)
+                .join("。") +
+              "。"
+            );
+
+          }
+
+
+          if (action.length) {
+
+            output.push(
+              "【したいこと】 " +
+              action
+                .slice(0, 3)
+                .join("。") +
+              "。"
+            );
+
+          }
+
+
+          if (concern.length) {
+
+            output.push(
+              "【気になっていること】 " +
+              concern
+                .slice(0, 3)
+                .join("。") +
+              "。"
+            );
+
+          }
+
+
+          if (!output.length) {
+
+            output.push(
+              "【要点】 " +
+              sentences
+                .slice(0, 3)
+                .join("。") +
+              "。"
+            );
+
+          }
+
+
+          this.summary =
+            output.join("\n");
+
+          this.saveThought();
+
+        },
+
+
+        saveThought() {
+
+          localStorage.setItem(
+            "lifeWork.thought",
+            JSON.stringify({
+
+              raw:
+                this.rawThought,
+
+              summary:
+                this.summary,
+
+              updatedAt:
+                new Date().toISOString()
+
+            })
+          );
+
+
+          if (!sqliteDB) {
+            return;
+          }
+
+
+          try {
+
+            sqliteDB.run(
+              `
+                INSERT INTO thoughts
+                (
+                  raw,
+                  summary,
+                  created_at
+                )
+                VALUES (?, ?, ?)
+              `,
+              [
+
+                this.rawThought,
+
+                this.summary,
+
+                new Date().toISOString()
+
+              ]
+            );
+
+          } catch (error) {
+
+            console.warn(
+              "SQLite thought error:",
+              error
+            );
+
+          }
+
+        },
+
+
+        copySummary() {
+
+          if (!this.summary) {
+            return;
+          }
+
+          if (
+            navigator.clipboard
+          ) {
+
+            navigator.clipboard
+              .writeText(
+                this.summary
+              )
+              .then(
+                () =>
+                  this.notifySaved()
+              );
+
+            return;
+
+          }
+
+          const textarea =
+            document.createElement(
+              "textarea"
+            );
+
+          textarea.value =
+            this.summary;
+
+          document.body.appendChild(
+            textarea
+          );
+
+          textarea.select();
+
+          document.execCommand(
+            "copy"
+          );
+
+          textarea.remove();
+
+          this.notifySaved();
+
+        },
+
+
+        setThoughtTemplate(
+          type
+        ) {
+
+          const templates = {
+
+            "相談":
+              "【相談】\n今困っていること：\n\n確認したいこと：\n",
+
+            "報告":
+              "【報告】\n現状：\n\n進捗：\n\n問題点：\n",
+
+            "依頼":
+              "【依頼】\nお願いしたいこと：\n\n期限：\n\n理由：\n"
+
+          };
+
+          this.rawThought =
+            templates[type] || "";
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Quick Actions
+         * -------------------------------------------------------
+         */
+
+        restMode() {
+
+          this.energy =
+            Math.min(
+              10,
+              Number(this.energy) + 1
+            );
+
+          this.stress =
+            Math.max(
+              1,
+              Number(this.stress) - 1
+            );
+
+          this.healthNote =
+            "意識的に休憩する。";
+
+          this.saveHealth();
+
+          alert(
+            "休憩モード：いったん画面から離れて休みましょう。"
+          );
+
+        },
+
+
+        focusMode() {
+
+          const unfinished =
+            this.tasks
+              .filter(
+                task =>
+                  !task.completed
+              )
+              .sort(
+                (a, b) =>
+                  Number(b.progress) -
+                  Number(a.progress)
+              );
+
+          if (!unfinished.length) {
+
+            alert(
+              "未完了タスクはありません。"
+            );
+
+            return;
+
+          }
+
+          alert(
+            "まずこれに集中：\n\n" +
+            unfinished[0].title
+          );
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * LocalStorage
+         * -------------------------------------------------------
+         */
+
+        saveToLocalStorage() {
+
+          localStorage.setItem(
+
+            "lifeWork.tasks",
+
+            JSON.stringify(
+              this.tasks
+            )
+
+          );
+
+
+          localStorage.setItem(
+
+            "lifeWork.projects",
+
+            JSON.stringify(
+              this.projects
+            )
+
+          );
+
+
+          localStorage.setItem(
+
+            "lifeWork.health",
+
+            JSON.stringify({
+
+              mood:
+                this.currentMood,
+
+              energy:
+                this.energy,
+
+              stress:
+                this.stress,
+
+              sleep:
+                this.sleep,
+
+              note:
+                this.healthNote,
+
+              updatedAt:
+                new Date().toISOString()
+
+            })
+
+          );
+
+        },
+
+
+        loadFromLocalStorage() {
+
+          try {
+
+            const tasks =
+              localStorage.getItem(
+                "lifeWork.tasks"
+              );
+
+            const projects =
+              localStorage.getItem(
+                "lifeWork.projects"
+              );
+
+            const health =
+              localStorage.getItem(
+                "lifeWork.health"
+              );
+
+            const thought =
+              localStorage.getItem(
+                "lifeWork.thought"
+              );
+
+
+            this.tasks =
+              tasks
+                ? JSON.parse(tasks)
+                : structuredClone(
+                    DEFAULT_TASKS
+                  );
+
+
+            this.projects =
+              projects
+                ? JSON.parse(projects)
+                : structuredClone(
+                    DEFAULT_PROJECTS
+                  );
+
+
+            if (health) {
+
+              const value =
+                JSON.parse(health);
+
+              this.currentMood =
+                value.mood ?? 3;
+
+              this.energy =
+                value.energy ?? 6;
+
+              this.stress =
+                value.stress ?? 4;
+
+              this.sleep =
+                value.sleep ?? 7;
+
+              this.healthNote =
+                value.note ?? "";
+
+            }
+
+
+            if (thought) {
+
+              const value =
+                JSON.parse(thought);
+
+              this.rawThought =
+                value.raw ?? "";
+
+              this.summary =
+                value.summary ?? "";
+
+            }
+
+          } catch (error) {
+
+            console.warn(
+              "LocalStorage load error:",
+              error
+            );
+
+            this.tasks =
+              structuredClone(
+                DEFAULT_TASKS
+              );
+
+            this.projects =
+              structuredClone(
+                DEFAULT_PROJECTS
+              );
+
+          }
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * SQLite
+         * -------------------------------------------------------
+         */
+
+        saveEverythingToSQLite() {
+
+          if (!sqliteDB) {
+            return;
+          }
+
+          try {
+
+            /*
+             * Tasks
+             */
+
+            sqliteDB.run(
+              "DELETE FROM tasks"
+            );
+
+            this.tasks.forEach(
+              task => {
+
+                sqliteDB.run(
+
+                  `
+                    INSERT INTO tasks
+                    (
+                      id,
+                      title,
+                      priority,
+                      category,
+                      progress,
+                      completed,
+                      created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                  `,
+
+                  [
+
+                    task.id,
+
+                    task.title,
+
+                    task.priority,
+
+                    task.category,
+
+                    task.progress,
+
+                    task.completed
+                      ? 1
+                      : 0,
+
+                    new Date()
+                      .toISOString()
+
+                  ]
+
+                );
+
+              }
+            );
+
+
+            /*
+             * Projects
+             */
+
+            sqliteDB.run(
+              "DELETE FROM projects"
+            );
+
+
+            this.projects.forEach(
+              project => {
+
+                sqliteDB.run(
+
+                  `
+                    INSERT INTO projects
+                    (
+                      id,
+                      name,
+                      note,
+                      progress,
+                      color,
+                      created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                  `,
+
+                  [
+
+                    project.id,
+
+                    project.name,
+
+                    project.note,
+
+                    project.progress,
+
+                    project.color,
+
+                    new Date()
+                      .toISOString()
+
+                  ]
+
+                );
+
+              }
+            );
+
+          } catch (error) {
+
+            console.warn(
+              "SQLite save error:",
+              error
+            );
+
+          }
+
+        },
+
+
+        loadSQLiteIfNecessary() {
+
+          /*
+           * LocalStorageを正本として利用するため、
+           * 初回データのロードはLocalStorageから行う。
+           *
+           * sql.jsは同じデータをブラウザ内SQLiteとして
+           * 扱えるよう同期する。
+           */
+
+          this.saveEverythingToSQLite();
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Unified save
+         * -------------------------------------------------------
+         */
+
+        saveEverything() {
+
+          this.saveToLocalStorage();
+
+          this.saveEverythingToSQLite();
+
+          this.notifySaved();
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Export
+         * -------------------------------------------------------
+         */
+
+        exportJSON() {
+
+          const data = {
+
+            app:
+              "KokoLog",
+
+            exportedAt:
+              new Date().toISOString(),
+
+            date:
+              (
+                typeof window.pyCurrentDate ===
+                "function"
+              )
+              ? window.pyCurrentDate()
+              : new Date()
+                  .toISOString()
+                  .slice(0, 10),
+
+            tasks:
+              this.tasks,
+
+            projects:
+              this.projects,
+
+            health: {
+
+              mood:
+                this.currentMood,
+
+              energy:
+                this.energy,
+
+              stress:
+                this.stress,
+
+              sleep:
+                this.sleep,
+
+              note:
+                this.healthNote
+
+            },
+
+            thought: {
+
+              raw:
+                this.rawThought,
+
+              summary:
+                this.summary
+
+            }
+
+          };
+
+
+          const blob =
+            new Blob(
+
+              [
+                JSON.stringify(
+                  data,
+                  null,
+                  2
+                )
+              ],
+
+              {
+                type:
+                  "application/json"
+              }
+
+            );
+
+
+          const url =
+            URL.createObjectURL(
+              blob
+            );
+
+
+          const link =
+            document.createElement(
+              "a"
+            );
+
+
+          link.href =
+            url;
+
+
+          link.download =
+            "life-work-manager-" +
+            new Date()
+              .toISOString()
+              .slice(0, 10) +
+            ".json";
+
+
+          document.body.appendChild(
+            link
+          );
+
+
+          link.click();
+
+
+          link.remove();
+
+
+          URL.revokeObjectURL(
+            url
+          );
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Reset
+         * -------------------------------------------------------
+         */
+
+        clearAll() {
+
+          if (
+            !confirm(
+              "タスク・業務・健康状態・入力内容を初期化しますか？"
+            )
+          ) {
+            return;
+          }
+
+
+          localStorage.removeItem(
+            "lifeWork.tasks"
+          );
+
+          localStorage.removeItem(
+            "lifeWork.projects"
+          );
+
+          localStorage.removeItem(
+            "lifeWork.health"
+          );
+
+          localStorage.removeItem(
+            "lifeWork.thought"
+          );
+
+
+          this.tasks =
+            structuredClone(
+              DEFAULT_TASKS
+            );
+
+
+          this.projects =
+            structuredClone(
+              DEFAULT_PROJECTS
+            );
+
+
+          this.currentMood = 3;
+
+          this.energy = 6;
+
+          this.stress = 4;
+
+          this.sleep = 7;
+
+          this.healthNote = "";
+
+          this.rawThought = "";
+
+          this.summary = "";
+
+
+          this.saveEverything();
+
+        },
+
+
+        /*
+         * -------------------------------------------------------
+         * Notification
+         * -------------------------------------------------------
+         */
+
+        notifySaved() {
+
+          const element =
+            document.getElementById(
+              "saveNotification"
+            );
+
+          if (!element) {
+            return;
+          }
+
+
+          element.style.opacity =
+            "1";
+
+
+          setTimeout(
+            () => {
+
+              element.style.opacity =
+                "0";
+
+            },
+            1400
+          );
+
+        }
+
+      };
+
+    }
+
+
+    /*
+     * =========================================================
+     * HTMX events
+     * =========================================================
+     *
+     * 現在は完全クライアントサイドなので通信先は不要。
+     * 将来PHP APIを追加する場合、
+     *
+     * hx-get="/api/tasks.php"
+     * hx-post="/api/tasks.php"
+     *
+     * などに拡張できる。
+     * =========================================================
+     */
+
+    document.body.addEventListener(
+      "htmx:afterRequest",
+      () => {
+
+        const event =
+          new CustomEvent(
+            "dashboard:saved"
+          );
+
+        document.body.dispatchEvent(
+          event
+        );
+
+      }
+    );
+
+
+    /*
+     * =========================================================
+     * hyperscript integration
+     * =========================================================
+     */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        document
+          .querySelectorAll(
+            "[data-motion-button]"
+          )
+          .forEach(
+            element => {
+
+              element.addEventListener(
+                "click",
+                () => {
+
+                  element.classList
+                    .add(
+                      "motion-scale"
+                    );
+
+                  setTimeout(
+                    () => {
+
+                      element.classList
+                        .remove(
+                          "motion-scale"
+                        );
+
+                    },
+                    350
+                  );
+
+                }
+              );
+
+            }
+          );
+
+      }
+    );
+
+  </script>
+
+
+  <!-- =========================================================
+       Hidden HTMX / hyperscript integration target
+       ========================================================= -->
+
+  <div
+    id="htmxTarget"
+    hx-trigger="dashboard:saved from:body"
+    hx-swap="none"
+    hidden>
+  </div>
+
+
+  <button
+    type="button"
+    data-motion-button
+    hidden
+    _="on click toggle .active on me">
+  </button>
+
+
+</body>
+</html>
