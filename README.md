@@ -692,17 +692,17 @@ KokoLogは、現在の単一HTML構成から段階的に拡張できます。
           ▼          ▼             ▼                    　
        Tasks        Health       Thoughts                    　
           │         │              │                    　
-          └─────────────┘
-                     │
-                     ▼
+          └─────────┼──────────────┘
+                    │
+                    ▼
                   SQLite
-                     │
-             ┌───────┴──────────┐
-             │                  │
-             ▼                  ▼
-         Local DB            PHP API
-                                │
-                                ▼
+                    │
+             ┌──────┴──────────┐
+             │                 │
+             ▼                 ▼
+         Local DB           PHP API
+                               │
+                               ▼
                            Server Database
 ```
 
